@@ -19,8 +19,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/gregk/redis_tui",  # Updated with your repo
-    packages=find_packages(where="src"),
-    package_dir={"": "src"},
+    packages=find_packages(where="src"),  # Find all packages under src
+    package_dir={"": "src"},  # Root package is in src directory
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Environment :: Console",
@@ -37,7 +37,7 @@ setup(
     install_requires=requirements,
     entry_points={
         "console_scripts": [
-            "redis-tui=src.app:main",  # Updated entry point
+            "redis-tui=src.app:main",  # Direct path to app.py in src
         ],
     },
 ) 

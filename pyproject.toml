@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "redis-tui"
+version = "0.1.0"
+authors = [
+    { name="Gregory K" },
+]
+description = "A terminal user interface for browsing Redis data"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "redis>=5.0.0",
+    "textual>=0.52.1",
+    "typing-extensions>=4.8.0"
+]
+
+[project.scripts]
+redis-tui = "redis_tui.app:main" 

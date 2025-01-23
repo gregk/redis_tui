@@ -18,7 +18,7 @@ setup(
     description="A terminal user interface for browsing Redis data",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/redis-tui",  # Update with your repo
+    url="https://github.com/gregk/redis_tui",  # Updated with your repo
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     classifiers=[
@@ -37,7 +37,7 @@ setup(
     install_requires=requirements,
     entry_points={
         "console_scripts": [
-            "redis-tui=redis_tui.app:RedisTUI.run",
+            "redis-tui=src.app:main",  # Updated entry point
         ],
     },
 ) 

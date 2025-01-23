@@ -37,21 +37,53 @@ If you see `PONG` as the response, Redis is running correctly!
 
 ## Installation
 
-Install redis-tui using pip:
+### Option 1: Install from source (recommended for development)
+1. Clone the repository:
+```bash
+git clone https://github.com/gregk/redis_tui.git
+cd redis_tui
+```
+
+2. Create and activate a virtual environment:
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On macOS/Linux
+```
+
+3. Install in development mode:
+```bash
+pip install -e .
+```
+
+### Option 2: Install using pip (coming soon)
 ```bash
 pip install redis-tui
 ```
 
 ## Usage
 
-Basic usage with default Redis connection:
+There are two ways to run Redis TUI:
+
+1. Using the installed command:
 ```bash
 redis-tui
 ```
 
+2. Running the module directly:
+```bash
+python -m src.app
+```
+
+### Connection Options
+
 Connect to a specific Redis instance:
 ```bash
 redis-tui --host localhost --port 6379 --db 0
+```
+
+Or when running as a module:
+```bash
+python -m src.app --host localhost --port 6379 --db 0
 ```
 
 Load sample data for testing/demo purposes:

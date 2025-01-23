@@ -13,12 +13,12 @@ from textual.containers import Horizontal, Container
 from textual.widgets import Header, Footer, Tree
 from textual.binding import Binding
 import logging
-import sys
 from pathlib import Path
 
-from components.data_display import DataDisplay
-from data.redis_client import RedisClient
-from data.sample_data import load_sample_data
+# Update these imports to be relative to src
+from .components.data_display import DataDisplay
+from .data.redis_client import RedisClient
+from .data.sample_data import load_sample_data
 
 # Set up logging
 log_dir = Path.home() / ".redis_tui"

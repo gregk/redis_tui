@@ -9,7 +9,7 @@ from typing import Dict, Any
 import json
 from .redis_client import RedisClient
 
-SAMPLE_DATA = {
+SAMPLE_DATA: Dict[str, Any] = {
     # Game of Thrones Data
     "got:houses:stark": {
         "type": "hash",
@@ -171,89 +171,20 @@ SAMPLE_DATA = {
     
     # Code Components
     "code:key_tree": {
-        "type": "code",
-        "value": {
-            "metadata": {
-                "name": "KeyTree",
-                "type": "class",
-                "module": "redis_tui.components.key_tree",
-                "description": "A tree widget for displaying Redis keys hierarchically",
-                "methods": [
-                    {
-                        "name": "_build_tree",
-                        "description": "Recursively builds the tree structure from Redis keys",
-                        "parameters": "parent: TreeNode, key_groups: Dict[str, List[str]]",
-                        "returns": "None"
-                    },
-                    {
-                        "name": "update_keys",
-                        "description": "Update the tree with Redis keys",
-                        "parameters": "keys: List[str]",
-                        "returns": "None"
-                    }
-                ]
-            },
-            "code": """class KeyTree(Tree):
-    \"\"\"A tree widget for displaying Redis keys hierarchically.
-    
-    This widget organizes Redis keys into a collapsible tree structure,
-    grouping them by their prefixes for easier navigation.
-    \"\"\"
-    
-    def __init__(self):
-        super().__init__("Redis Keys")
-        self.root.expand()
-        
-    def update_keys(self, keys: list[str]) -> None:
-        \"\"\"Update the tree with a new list of Redis keys.\"\"\"
-        self.clear()
-        key_groups = self._group_keys(keys)
-        self._build_tree(self.root, key_groups)"""
+        "metadata": {
+            "name": "KeyTree",
+            "type": "class",
+            "module": "redis_tui.components.key_tree",
+            "description": "Tree view for Redis keys"
         }
     },
     
     "code:data_display": {
-        "type": "code",
-        "value": {
-            "metadata": {
-                "name": "DataDisplay",
-                "type": "class",
-                "module": "redis_tui.components.data_display",
-                "description": "A widget for displaying Redis data with syntax highlighting",
-                "methods": [
-                    {
-                        "name": "update_content",
-                        "description": "Update the display with new data",
-                        "parameters": "key: str, data: Any",
-                        "returns": "None"
-                    },
-                    {
-                        "name": "toggle_view",
-                        "description": "Toggle between raw and formatted views",
-                        "parameters": "None",
-                        "returns": "None"
-                    }
-                ]
-            },
-            "code": """class DataDisplay(TextLog):
-    \"\"\"A widget for displaying Redis data with syntax highlighting.
-    
-    Supports different display formats based on the data type:
-    - Code: Syntax highlighted with line numbers
-    - JSON: Pretty printed with proper indentation
-    - Other: Cleanly formatted text
-    \"\"\"
-    
-    def __init__(self):
-        super().__init__()
-        self._current_key = None
-        self._current_data = None
-        
-    def update_content(self, key: str, data: Any) -> None:
-        \"\"\"Update the display with new data.\"\"\"
-        self._current_key = key
-        self._current_data = data
-        self._refresh_display()"""
+        "metadata": {
+            "name": "DataDisplay",
+            "type": "class",
+            "module": "redis_tui.components.data_display",
+            "description": "A widget for displaying Redis data with syntax highlighting"
         }
     }
 }
@@ -264,27 +195,27 @@ async def load_sample_data(client: RedisClient) -> None:
     Args:
         client: Redis client instance
     """
-    for key, data in SAMPLE_DATA.items():
-        data_type = data["type"]
-        value = data["value"]
-        
-        if data_type == "string":
-            await client.client.set(key, value)
-        elif data_type == "hash":
-            # Convert all values to strings
-            string_value = {k: str(v) for k, v in value.items()}
-            await client.client.hset(key, mapping=string_value)
-        elif data_type == "list":
-            await client.client.rpush(key, *value)
-        elif data_type == "set":
-            await client.client.sadd(key, *value)
-        elif data_type == "zset":
-            for member, score in value:
-                await client.client.zadd(key, {member: score})
+    for key, value in SAMPLE_DATA.items():
+        if isinstance(value, dict) and "type" in value:
+            data_type = value["type"]
+            if data_type == "string":
+                await client.client.set(key, value["value"])
+            elif data_type == "hash":
+                string_value = {k: str(v) for k, v in value["value"].items()}
+                await client.client.hset(key, mapping=string_value)
+            elif data_type == "list":
+                await client.client.rpush(key, *value["value"])
+            elif data_type == "set":
+                await client.client.sadd(key, *value["value"])
+            elif data_type == "zset":
+                for member, score in value["value"]:
+                    await client.client.zadd(key, {member: score})
                 
-        # Set TTL if specified
-        if "ttl" in data:
-            await client.client.expire(key, data["ttl"])
-        elif data_type == "code":
+            # Set TTL if specified
+            if "ttl" in value:
+                await client.client.expire(key, value["ttl"])
+        elif isinstance(value, str):
+            await client.client.set(key, value)
+        elif isinstance(value, dict) and "metadata" in value:
             # Store code components as JSON strings
             await client.client.set(key, json.dumps(value)) 
